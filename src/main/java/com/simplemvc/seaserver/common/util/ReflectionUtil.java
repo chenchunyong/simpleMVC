@@ -20,20 +20,19 @@ public class ReflectionUtil {
      */
     public static Set<Class<?>> GetAnnotationClass(String[] packages, Class<? extends Annotation> annotation) {
         Reflections reflections = new Reflections(packages, new TypeAnnotationsScanner());
-        Set<Class<?>> annotationClasses = reflections.getTypesAnnotatedWith(annotation);
-        log.info("the number of class annotated with @" + annotation.getSimpleName() + "[{}]", annotationClasses.size());
+        Set<Class<?>> annotationClasses = reflections.getTypesAnnotatedWith(annotation,true);
         return annotationClasses;
     }
 
     /**
      * 获取bean的名字
      *
-     * @param aclass
+     * @param aClass
      * @return
      */
-    public static String getBeanName(Class<?> aclass) {
-        Component component = aclass.getAnnotation(Component.class);
-        String className = aclass.getName();
+    public static String getBeanName(Class<?> aClass) {
+        Component component = aClass.getAnnotation(Component.class);
+        String className = aClass.getName();
         if (!Objects.isNull(component)) {
             className = !"".equals(component.name()) ? component.name() : className;
         }
@@ -42,14 +41,15 @@ public class ReflectionUtil {
 
     /**
      * 初始化对象
+     *
      * @param aClass
      * @return
      */
     public static Object newInstance(Class<?> aClass) {
         try {
-          return aClass.newInstance();
+            return aClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw  new IllegalStateException(e.getMessage(),e);
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 }

@@ -27,7 +27,9 @@ public class ClassFactory {
      */
     public static void loadClass(String[] packageNames) {
         LOADED_ANNOTATION.forEach(annotation -> {
-            CLASS.put(annotation, ReflectionUtil.GetAnnotationClass(packageNames, annotation));
+            Set<Class<?>> classSet = ReflectionUtil.GetAnnotationClass(packageNames, annotation);
+            CLASS.put(annotation, classSet);
+            log.info("the number of class annotated with @" + annotation.getSimpleName() + "[{}]", classSet.size());
         });
     }
 }
