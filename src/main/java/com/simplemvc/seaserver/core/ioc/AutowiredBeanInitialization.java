@@ -34,10 +34,10 @@ public class AutowiredBeanInitialization {
     }
 
     private Object getAutowiredFieldInstance(Field beanField, String[] packageNames) {
-        Class<? extends Field> beanFieldClass = beanField.getClass();
+        Class<?> beanFieldClass = beanField.getType();
         String beanName = ReflectionUtil.getBeanName(beanFieldClass);
         if (beanFieldClass.isInterface()) {
-            Set<Class<? extends Field>> subTypeClass = (Set<Class<? extends Field>>) ReflectionUtil.getSubTypeClass(packageNames, beanField.getClass());
+            Set<Class<?>> subTypeClass = ReflectionUtil.getSubTypeClass(packageNames, (Class<Object>) beanFieldClass);
             if (subTypeClass.size() == 0) {
                 throw new InterfaceNotHaveImplementedClassException(beanField.getName() + " is interface but do not have implemented class exception");
             } else if (subTypeClass.size() == 1) {
