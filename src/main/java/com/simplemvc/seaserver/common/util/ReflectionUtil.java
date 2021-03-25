@@ -20,7 +20,7 @@ public class ReflectionUtil {
      */
     public static Set<Class<?>> GetAnnotationClass(String[] packages, Class<? extends Annotation> annotation) {
         Reflections reflections = new Reflections(packages, new TypeAnnotationsScanner());
-        Set<Class<?>> annotationClasses = reflections.getTypesAnnotatedWith(annotation,true);
+        Set<Class<?>> annotationClasses = reflections.getTypesAnnotatedWith(annotation, true);
         return annotationClasses;
     }
 
@@ -51,5 +51,18 @@ public class ReflectionUtil {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * 获取实现接口的具体对象
+     *
+     * @param packageName
+     * @param interfaceClass
+     * @param <T>
+     * @return
+     */
+    public static <T> Set<Class<? extends T>> getSubTypeClass(String[] packageName, Class<T> interfaceClass) {
+        Reflections reflections = new Reflections(packageName);
+        return reflections.getSubTypesOf(interfaceClass);
     }
 }
