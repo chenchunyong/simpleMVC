@@ -7,7 +7,7 @@ import com.simplemvc.seaserver.annotation.value.Value;
 
 @Component(name = "CircularDependencyAImpl")
 public class CircularDependencyAImpl implements CircularDependencyA {
-    @Value("test1.abc")
+    @Value("languages")
     public String languages;
     @Autowired
     private CircularDependencyB testB;

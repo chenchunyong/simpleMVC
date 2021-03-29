@@ -29,6 +29,11 @@ public class AutowiredBeanInitialization {
      */
     public void initialize(Object beanInstance) {
         Field[] fields = beanInstance.getClass().getDeclaredFields();
+        String beanName = beanInstance.getClass().getName();
+        if (SINGLETON_OBJECT.containsKey(beanName)) {
+            return;
+        }
+        SINGLETON_OBJECT.put(beanName, beanInstance);
         Arrays.stream(fields).forEach(field -> {
             if (field.isAnnotationPresent(Autowired.class)) {
                 String beanFieldName = ReflectionUtil.getBeanName(field.getType());
