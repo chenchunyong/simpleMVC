@@ -20,8 +20,11 @@ public class ApplicationContext {
     public void run(Class<?> applicationClass) {
         String[] packageNames = ComponentScanHandler.getComponentPackage(applicationClass);
         ClassFactory.loadClass(packageNames);
-        BeanFactory.initBean(packageNames);
+        BeanFactory.initBean();
+        loadResources(applicationClass);
+        BeanFactory.injectProperties(packageNames);
     }
+
     private void loadResources(Class<?> applicationClass) {
         ClassLoader classLoader = applicationClass.getClassLoader();
         List<Path> filePaths = new ArrayList<>();

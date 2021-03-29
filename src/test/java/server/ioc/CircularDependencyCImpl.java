@@ -1,4 +1,4 @@
-package demo.server.ioc;
+package server.ioc;
 
 import com.simplemvc.seaserver.annotation.ioc.Autowired;
 import com.simplemvc.seaserver.annotation.ioc.Component;

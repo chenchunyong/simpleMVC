@@ -2,7 +2,10 @@ package com.simplemvc.seaserver.core.ioc;
 
 import com.simplemvc.seaserver.annotation.ioc.Autowired;
 import com.simplemvc.seaserver.annotation.ioc.Qualifier;
+import com.simplemvc.seaserver.annotation.value.Value;
+import com.simplemvc.seaserver.common.util.ObjectUtil;
 import com.simplemvc.seaserver.common.util.ReflectionUtil;
+import com.simplemvc.seaserver.core.config.ConfigurationManager;
 import com.simplemvc.seaserver.exception.CanNotDetermineTargetBeanException;
 import com.simplemvc.seaserver.exception.InterfaceNotHaveImplementedClassException;
 
@@ -32,6 +35,10 @@ public class AutowiredBeanInitialization {
                 Object beanFieldInstance = getAutowiredFieldInstance(field);
                 beanFieldInstance = resolveCircularDependency(beanFieldInstance, beanFieldName);
                 ReflectionUtil.setField(beanInstance, field, beanFieldInstance);
+            }
+            if (field.isAnnotationPresent(Value.class)) {
+                Object convertValue = getValueFieldValue(field);
+                ReflectionUtil.setField(beanInstance, field, convertValue);
             }
         });
     }
@@ -70,5 +77,15 @@ public class AutowiredBeanInitialization {
             throw new CanNotDetermineTargetBeanException("can not determine target bean of" + beanFieldClass.getName());
         }
         return beanFieldInstance;
+    }
+
+    private Object getValueFieldValue(Field beanField) {
+        String key = beanField.getDeclaredAnnotation(Value.class).value();
+        ConfigurationManager configurationManager = BeanFactory.getBean(ConfigurationManager.class);
+        String value = configurationManager.getString(key);
+        if (value == null) {
+            throw new IllegalArgumentException("can not find target value for property:{" + key + "}");
+        }
+        return ObjectUtil.convert(beanField.getType(), value);
     }
 }

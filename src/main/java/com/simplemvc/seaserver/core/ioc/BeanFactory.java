@@ -26,7 +26,7 @@ public class BeanFactory {
     /**
      * 初始化实例
      */
-    public static void initBean(String[] packageNames) {
+    public static void initBean() {
         // 实例化对象
         LOADED_ANNOTATION.forEach(annotation -> {
             for (Class<?> aClass : ClassFactory.CLASS.get(annotation)) {
@@ -35,6 +35,10 @@ public class BeanFactory {
             }
         });
         BEANS.put(ConfigurationManager.class.getName(), new ConfigurationManager(ConfigurationFactory.getConfig()));
+
+    }
+
+    public static void injectProperties(String[] packageNames) {
         // 初始化依赖注入
         AutowiredBeanInitialization beanInitialization = new AutowiredBeanInitialization(packageNames);
         BEANS.values().forEach(beanInitialization::initialize);

@@ -1,4 +1,4 @@
-package demo.server.ioc;
+package server.ioc;
 
 public interface CircularDependencyB {
 

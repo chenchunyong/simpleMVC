@@ -18,6 +18,21 @@ public class ConfigurationManager extends AbstractConfiguration {
     }
 
     @Override
+    public int getInt(String id) {
+        return configuration.getInt(id);
+    }
+
+    @Override
+    public String getString(String id) {
+        return configuration.getString(id);
+    }
+
+    @Override
+    public Boolean getBoolean(String id) {
+        return configuration.getBoolean(id);
+    }
+
+    @Override
     public void loadResources(List<Path> resourcePaths) {
         resourcePaths.forEach(path -> {
             String fileName = path.getFileName().toString();

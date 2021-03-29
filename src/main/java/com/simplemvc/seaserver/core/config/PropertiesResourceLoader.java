@@ -17,7 +17,7 @@ public class PropertiesResourceLoader extends AbstractResourceLoader {
         }
         Map<String, String> map = new HashMap<>(properties.size());
         properties.entrySet().forEach(property -> {
-            map.put(property.getKey().toString(), property.getKey().toString());
+            map.put(property.getKey().toString(), property.getValue().toString());
         });
         return map;
 
