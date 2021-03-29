@@ -8,11 +8,14 @@ import com.simplemvc.seaserver.exception.InterfaceNotHaveImplementedClassExcepti
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AutowiredBeanInitialization {
     private String[] packageNames;
+    private static Map<String, Object> SINGLETON_OBJECT = new ConcurrentHashMap<>();
 
     public AutowiredBeanInitialization(String[] packageNames) {
         this.packageNames = packageNames;
@@ -21,19 +24,34 @@ public class AutowiredBeanInitialization {
     /**
      * 初始化依赖注入
      */
-    public void initialize() {
-        BeanFactory.BEANS.values().forEach(beanInstance -> {
-            Field[] fields = beanInstance.getClass().getDeclaredFields();
-            Arrays.stream(fields).forEach(field -> {
-                if (field.isAnnotationPresent(Autowired.class)) {
-                    Object beanFieldInstance = getAutowiredFieldInstance(field, packageNames);
-                }
-            });
+    public void initialize(Object beanInstance) {
+        Field[] fields = beanInstance.getClass().getDeclaredFields();
+        Arrays.stream(fields).forEach(field -> {
+            if (field.isAnnotationPresent(Autowired.class)) {
+                String beanFieldName = ReflectionUtil.getBeanName(field.getType());
+                Object beanFieldInstance = getAutowiredFieldInstance(field);
+                beanFieldInstance = resolveCircularDependency(beanFieldInstance, beanFieldName);
+                ReflectionUtil.setField(beanInstance, field, beanFieldInstance);
+            }
         });
-
     }
 
-    private Object getAutowiredFieldInstance(Field beanField, String[] packageNames) {
+    public Object resolveCircularDependency(Object beanFieldInstance, String beanFieldName) {
+        if (SINGLETON_OBJECT.containsKey(beanFieldName)) {
+            return SINGLETON_OBJECT.get(beanFieldName);
+        }
+        SINGLETON_OBJECT.put(beanFieldName, beanFieldInstance);
+        initialize(beanFieldInstance);
+        return beanFieldInstance;
+    }
+
+    /**
+     * 获取Field属性的实例
+     *
+     * @param beanField
+     * @return
+     */
+    private Object getAutowiredFieldInstance(Field beanField) {
         Class<?> beanFieldClass = beanField.getType();
         String beanName = ReflectionUtil.getBeanName(beanFieldClass);
         if (beanFieldClass.isInterface()) {

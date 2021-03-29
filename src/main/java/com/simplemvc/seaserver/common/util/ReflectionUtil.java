@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.TypeAnnotationsScanner;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Set;
 
@@ -64,5 +65,14 @@ public class ReflectionUtil {
     public static <T> Set<Class<? extends T>> getSubTypeClass(String[] packageName, Class<T> interfaceClass) {
         Reflections reflections = new Reflections(packageName);
         return reflections.getSubTypesOf(interfaceClass);
+    }
+
+    public static void setField(Object obj, Field field, Object value) {
+        field.setAccessible(true);
+        try {
+            field.set(obj,value);
+        } catch (IllegalAccessException e) {
+            throw  new AssertionError(e);
+        }
     }
 }
