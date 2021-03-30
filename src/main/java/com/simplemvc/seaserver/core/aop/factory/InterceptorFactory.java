@@ -40,6 +40,9 @@ public class InterceptorFactory {
             });
         }
         interceptors = interceptors.stream().sorted(Comparator.comparing(Interceptor::getOrder)).collect(Collectors.toList());
+    }
 
+    public static List<Interceptor> getInterceptors() {
+        return interceptors;
     }
 }
