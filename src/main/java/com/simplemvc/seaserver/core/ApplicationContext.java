@@ -1,5 +1,6 @@
 package com.simplemvc.seaserver.core;
 
+import com.simplemvc.seaserver.core.aop.factory.InterceptorFactory;
 import com.simplemvc.seaserver.core.boot.ComponentScanHandler;
 import com.simplemvc.seaserver.core.config.Configuration;
 import com.simplemvc.seaserver.core.config.ConfigurationManager;
@@ -23,6 +24,7 @@ public class ApplicationContext {
         BeanFactory.initBean();
         loadResources(applicationClass);
         BeanFactory.injectProperties(packageNames);
+        InterceptorFactory.loadInterceptor(packageNames);
     }
 
     private void loadResources(Class<?> applicationClass) {
