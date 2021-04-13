@@ -15,14 +15,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InterceptorFactory {
-    private static List<Interceptor> interceptors = new ArrayList<>();
+    private static List<Interceptor> INTERCEPTOR = new ArrayList<>();
 
     public static void loadInterceptor(String[] packageNames) {
         // 获取实现interceptor的类
         Set<Class<? extends Interceptor>> interceptorClass = ReflectionUtil.getSubTypeClass(packageNames, Interceptor.class);
         interceptorClass.forEach(interceptor -> {
             try {
-                interceptors.add(interceptor.newInstance());
+                INTERCEPTOR.add(interceptor.newInstance());
             } catch (IllegalAccessException | InstantiationException e) {
                 throw new CannotInitializeConstructorException(e.getMessage());
             }
@@ -36,13 +36,13 @@ public class InterceptorFactory {
                 if (aClass.isAnnotationPresent(Order.class)) {
                     interceptor.setOrder(aClass.getAnnotation(Order.class).value());
                 }
-                interceptors.add(interceptor);
+                INTERCEPTOR.add(interceptor);
             });
         }
-        interceptors = interceptors.stream().sorted(Comparator.comparing(Interceptor::getOrder)).collect(Collectors.toList());
+        INTERCEPTOR = INTERCEPTOR.stream().sorted(Comparator.comparing(Interceptor::getOrder)).collect(Collectors.toList());
     }
 
     public static List<Interceptor> getInterceptors() {
-        return interceptors;
+        return INTERCEPTOR;
     }
 }
