@@ -2,6 +2,8 @@ package com.simplemvc.seaserver.core.ioc;
 
 import com.simplemvc.seaserver.annotation.ioc.Component;
 import com.simplemvc.seaserver.common.util.ReflectionUtil;
+import com.simplemvc.seaserver.core.aop.intercept.AopProxyBeanPostProcessorFactory;
+import com.simplemvc.seaserver.core.aop.intercept.BeanPostProcessor;
 import com.simplemvc.seaserver.core.common.ClassFactory;
 import com.simplemvc.seaserver.core.config.ConfigurationFactory;
 import com.simplemvc.seaserver.core.config.ConfigurationManager;
@@ -42,6 +44,13 @@ public class BeanFactory {
         // 初始化依赖注入
         AutowiredBeanInitialization beanInitialization = new AutowiredBeanInitialization(packageNames);
         BEANS.values().forEach(beanInitialization::initialize);
+    }
+
+    public static void applyBeanPostProcessor() {
+        BEANS.replaceAll((beanName, beanInstance) -> {
+            BeanPostProcessor beanPostProcessor = AopProxyBeanPostProcessorFactory.get(beanInstance.getClass());
+            return beanPostProcessor.postProcessAfterInitialization(beanInstance);
+        });
     }
 
     public static <T> T getBean(Class<T> type) {

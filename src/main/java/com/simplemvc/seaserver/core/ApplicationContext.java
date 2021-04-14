@@ -23,8 +23,9 @@ public class ApplicationContext {
         ClassFactory.loadClass(packageNames);
         BeanFactory.initBean();
         loadResources(applicationClass);
-        BeanFactory.injectProperties(packageNames);
         InterceptorFactory.loadInterceptor(packageNames);
+        BeanFactory.injectProperties(packageNames);
+        BeanFactory.applyBeanPostProcessor();
     }
 
     private void loadResources(Class<?> applicationClass) {
