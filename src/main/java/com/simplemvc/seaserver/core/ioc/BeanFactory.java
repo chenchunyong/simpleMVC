@@ -2,6 +2,7 @@ package com.simplemvc.seaserver.core.ioc;
 
 import com.simplemvc.seaserver.annotation.ioc.Component;
 import com.simplemvc.seaserver.common.util.ReflectionUtil;
+import com.simplemvc.seaserver.core.aop.factory.InterceptorFactory;
 import com.simplemvc.seaserver.core.aop.intercept.AopProxyBeanPostProcessorFactory;
 import com.simplemvc.seaserver.core.aop.intercept.BeanPostProcessor;
 import com.simplemvc.seaserver.core.common.ClassFactory;
@@ -28,7 +29,7 @@ public class BeanFactory {
     /**
      * 初始化实例
      */
-    public static void initBean() {
+    public static void initBean(String[] packageName) {
         // 实例化对象
         LOADED_ANNOTATION.forEach(annotation -> {
             for (Class<?> aClass : ClassFactory.CLASS.get(annotation)) {
@@ -37,7 +38,7 @@ public class BeanFactory {
             }
         });
         BEANS.put(ConfigurationManager.class.getName(), new ConfigurationManager(ConfigurationFactory.getConfig()));
-
+        applyBeanPostProcessor(packageName);
     }
 
     public static void injectProperties(String[] packageNames) {
@@ -46,7 +47,8 @@ public class BeanFactory {
         BEANS.values().forEach(beanInitialization::initialize);
     }
 
-    public static void applyBeanPostProcessor() {
+    public static void applyBeanPostProcessor(String[] packageNames) {
+        InterceptorFactory.loadInterceptor(packageNames);
         BEANS.replaceAll((beanName, beanInstance) -> {
             BeanPostProcessor beanPostProcessor = AopProxyBeanPostProcessorFactory.get(beanInstance.getClass());
             return beanPostProcessor.postProcessAfterInitialization(beanInstance);

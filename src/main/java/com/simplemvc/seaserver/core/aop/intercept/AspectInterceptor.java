@@ -3,6 +3,7 @@ package com.simplemvc.seaserver.core.aop.intercept;
 import com.simplemvc.seaserver.annotation.aop.After;
 import com.simplemvc.seaserver.annotation.aop.Before;
 import com.simplemvc.seaserver.annotation.aop.Pointcut;
+import com.simplemvc.seaserver.common.util.PatternMatchUtils;
 import com.simplemvc.seaserver.common.util.ReflectionUtil;
 import com.simplemvc.seaserver.core.aop.lang.JoinPoint;
 import com.simplemvc.seaserver.core.aop.lang.JoinPointIml;
@@ -39,6 +40,10 @@ public class AspectInterceptor extends Interceptor {
         });
     }
 
+    @Override
+    public boolean support(Object bean) {
+        return expressionUrls.stream().anyMatch(url -> PatternMatchUtils.simpleMatch(url, bean.getClass().getName())) && (!beforeMethods.isEmpty() || !afterMethods.isEmpty());
+    }
 
     @Override
     public Object intercept(MethodInvocation methodInvocation) {

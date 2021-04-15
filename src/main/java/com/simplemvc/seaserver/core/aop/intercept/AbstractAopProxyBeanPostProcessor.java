@@ -8,7 +8,7 @@ public abstract class AbstractAopProxyBeanPostProcessor implements BeanPostProce
         Object wrapperProxyBean = bean;
         for (Interceptor interceptor : InterceptorFactory.getInterceptors()) {
             if (interceptor.support(bean)) {
-                wrapperProxyBean = wrapBean(bean, interceptor);
+                wrapperProxyBean = wrapBean(wrapperProxyBean, interceptor);
             }
         }
         return wrapperProxyBean;

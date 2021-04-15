@@ -33,6 +33,6 @@ public class JoinPointIml implements JoinPoint {
 
     @Override
     public Method getTargetMethod() {
-        return null;
+        return this.targetMethod;
     }
 }

@@ -21,11 +21,9 @@ public class ApplicationContext {
     public void run(Class<?> applicationClass) {
         String[] packageNames = ComponentScanHandler.getComponentPackage(applicationClass);
         ClassFactory.loadClass(packageNames);
-        BeanFactory.initBean();
+        BeanFactory.initBean(packageNames);
         loadResources(applicationClass);
-        InterceptorFactory.loadInterceptor(packageNames);
         BeanFactory.injectProperties(packageNames);
-        BeanFactory.applyBeanPostProcessor();
     }
 
     private void loadResources(Class<?> applicationClass) {
